@@ -1,79 +1,35 @@
 package ua.lviv.iot.component.maneger;
 
 import ua.lviv.iot.component.model.AbstractComputer;
-import ua.lviv.iot.component.model.ComputerException;
+import ua.lviv.iot.component.model.ComputerTYPE;
 
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ComputerManager {
-  ComputerManagerUtils.MonitorSorterByPrice sorter =
-          new ComputerManagerUtils.MonitorSorterByPrice();
+public class  ComputerManager {
+  private List<AbstractComputer> components;
 
-  ComputerManagerUtils utils = new ComputerManagerUtils();
-  ComputerManagerUtils.MonitorSorterByBrand brandSorter =
-          utils.new MonitorSorterByBrand();
-
-  private List<AbstractComputer> computers = new LinkedList<>();
-
-  public void addComputers(List<AbstractComputer> computers) {
-    this.computers.addAll(computers);
+  public List<AbstractComputer> getComponents() {
+    return components;
   }
 
-  public void addComputer(AbstractComputer computer) {
-    this.computers.add(computer);
+  public void setComponents(List<AbstractComputer> components) {
+    this.components = components;
   }
 
-  public List<AbstractComputer> findWithPriceLowerThan(int price) {
+  public ComputerManager(List<AbstractComputer> decorations) {
+    super();
+    this.components = decorations;
+  }
 
-    List<AbstractComputer> result = new LinkedList<>();
-    for (AbstractComputer computer : computers) {
-      if (computer.getPrice() < price) {
-        result.add(computer);
+  public List<AbstractComputer> findDecorationsByType(EnumSet<ComputerTYPE> criterion) {
+    List<AbstractComputer> foundDecorations = new LinkedList<AbstractComputer>();
+    for (AbstractComputer currentDecor : this.components) {
+      if (currentDecor.checkCriterion(criterion)) {
+        foundDecorations.add(currentDecor);
       }
     }
-    return result;
+    return foundDecorations;
   }
-
-  public List<AbstractComputer> findBy(String brand) {
-    List<AbstractComputer> result = new LinkedList<>();
-
-    for (AbstractComputer computer : computers) {
-      String computerBrand = computer.getBrand();
-
-      if (computerBrand == null)
-        continue;
-
-      if (computerBrand.equals(brand)) {
-        result.add(computer);
-      }
-    }
-    return result;
-  }
-
-  public List<AbstractComputer> findByAnotherImplementation(String brand) {
-
-    List<AbstractComputer> result = new LinkedList<>();
-
-    if (brand == null)
-      return result;
-
-    for (AbstractComputer computer : computers) {
-
-      if (brand.equals(computer.getBrand())) {
-        result.add(computer);
-      }
-    }
-    return result;
-  }
-
-  public List<AbstractComputer> findByWithException(String brand)
-          throws ComputerException, NullPointerException {
-
-    if (brand == null)
-      throw new NullPointerException();
-
-    throw new ComputerException(new RuntimeException());
-  }
-
 }

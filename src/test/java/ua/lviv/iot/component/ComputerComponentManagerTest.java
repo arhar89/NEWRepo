@@ -1,20 +1,28 @@
 package ua.lviv.iot.component;
 
-import org.junit.jupiter.api.BeforeEach;
-import ua.lviv.iot.component.model.AbstractComputer;
-import ua.lviv.iot.component.model.Monitor;
+import ua.lviv.iot.component.model.*;
 
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 
 public abstract class ComputerComponentManagerTest {
-  protected List<AbstractComputer> monitors;
+  protected List<AbstractComputer> components = new LinkedList<AbstractComputer>();
 
-  @BeforeEach
-  public void createMonitors() {
-    monitors = new LinkedList<AbstractComputer>();
-    monitors.add(new Monitor(30, null));
-    monitors.add(new Monitor(45, null));
-    monitors.add(new Monitor(65, null));
+  public void createComponents() {
+    components.add(new BlockSystem("black", 3800,
+            EnumSet.of(ComputerTYPE.IN_TABLE), "Samsung",
+            3));
+    components.add(new BlockSystem("White", 4850,
+            EnumSet.of(ComputerTYPE.IN_TABLE), "Apple", 8));
+    components.add(new Keyboard("Silver", 850, EnumSet.of(ComputerTYPE.MECKHANICK, ComputerTYPE.MECKHANICK),
+            "hp", 48));
+    components.add(new Keyboard("White", 750, EnumSet.of(ComputerTYPE.MECKHANICK), "Xioami", 40));
+    components.add(new Monitor("Black", 1899, EnumSet.of(ComputerTYPE.IN_STAND, ComputerTYPE.IN_STAND,
+            ComputerTYPE.IN_STAND, ComputerTYPE.IN_TABLE), "Acer", 1980));
+    components.add(new Monitor("Space-grey", 1670, EnumSet.of(ComputerTYPE.IN_STAND, ComputerTYPE.IN_STAND,
+            ComputerTYPE.IN_STAND, ComputerTYPE.IN_TABLE), "Acer", 1680));
+
   }
+
 }

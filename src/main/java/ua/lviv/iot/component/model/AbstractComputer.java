@@ -1,35 +1,30 @@
 package ua.lviv.iot.component.model;
 
-public abstract class AbstractComputer {
+import java.util.EnumSet;
 
-  private int price;
-  private String brand;
-  private String color;
-  private int dateOfManufacture;
-  private int power;
-  private int numberOfKeys;
-  private String country;
-  private int screenExtection;
-  private int monitorSortByBrand;
-  public int sortByBrand;
+public class AbstractComputer {
 
-  public AbstractComputer(int price) {
+  private static final int DEFAULT_YEAR_OF_PRODUCTION = 1970;
+  private static final String DEFAULT_PRODUCER = "Unknown Chinese Producer";
+
+  protected String color;
+  protected int priceInHryvnas;
+  protected String brand;
+  protected int dateOfManufacture;
+  protected EnumSet<ComputerTYPE> type;
+
+  public AbstractComputer(String color, int priceInHryvnas, EnumSet<ComputerTYPE> type) {
+    this(color, priceInHryvnas, type, DEFAULT_PRODUCER, DEFAULT_YEAR_OF_PRODUCTION);
   }
 
-  public int getSortByBrand() {
-    return sortByBrand;
-  }
-
-  public void setSortByBrand(int sortByBrand) {
-    this.sortByBrand = sortByBrand;
-  }
-
-  public int getMonitorSortByBrand() {
-    return monitorSortByBrand;
-  }
-
-  public void setMonitorSortByBrand(int monitorSortByBrand) {
-    monitorSortByBrand = monitorSortByBrand;
+  public AbstractComputer(String color, int priceInHryvnas, EnumSet<ComputerTYPE> type, String brand,
+                       int dateOfManufacture) {
+    super();
+    this.color = color;
+    this.priceInHryvnas = priceInHryvnas;
+    this.type = type;
+    this.brand = brand;
+    this.dateOfManufacture = dateOfManufacture;
   }
 
   public String getBrand() {
@@ -40,15 +35,6 @@ public abstract class AbstractComputer {
     this.brand = brand;
   }
 
-  public String getColor() {
-    return color;
-  }
-
-  public void setColor(String color) {
-
-    this.color = color;
-  }
-
   public int getDateOfManufacture() {
     return dateOfManufacture;
   }
@@ -57,50 +43,89 @@ public abstract class AbstractComputer {
     this.dateOfManufacture = dateOfManufacture;
   }
 
-  public int getPower() {
-    return power;
+  public boolean checkCriterion(EnumSet<ComputerTYPE> criterion) {
+    return this.type.containsAll(criterion);
   }
 
-  public void setPower(int power) {
-    this.power = power;
+  public String getColor() {
+    return color;
   }
 
-  public int getNumberOfKeys() {
-    return numberOfKeys;
+  public void setColor(String color) {
+    this.color = color;
   }
 
-  public void setNumberOfKeys(int numberOfKeys) {
-    this.numberOfKeys = numberOfKeys;
+  public double getPriceInHryvnas() {
+    return priceInHryvnas;
   }
 
-  public String getCountry() {
-    return country;
+  public void setPriceInHryvnas(int priceInHryvnas) {
+    this.priceInHryvnas = priceInHryvnas;
   }
 
-  public void setCountry(String country) {
-    this.country = country;
+  public EnumSet<ComputerTYPE> getType() {
+    return type;
   }
 
-  public int getScreenExtection() {
-    return screenExtection;
+  public void setType(EnumSet<ComputerTYPE> type) {
+    this.type = type;
   }
 
-  public void setScreenExtection(int screenExtection) {
-    this.screenExtection = screenExtection;
+  public String getHeaders() {
+    return "color, priceInHryvnas, brand, dateOfManufacture, type";
   }
 
-  public AbstractComputer(int price, String brand) {
-    super();
-    this.price = price;
-
-
+  public String toCSV() {
+    return color + ", " + priceInHryvnas + ", " + brand + ", " + type;
   }
 
-  public int getPrice() {
-    return price;
+  @Override
+  public String toString() {
+    return "color=" + color + ", priceInHryvnas=" + priceInHryvnas + ", brand=" + brand + ", dateOfManufacture="
+            + dateOfManufacture + ", type=" + type + "]";
   }
 
-  public void setPrice(int price) {
-    this.price = price;
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((color == null) ? 0 : color.hashCode());
+    long temp;
+    temp = Double.doubleToLongBits(priceInHryvnas);
+    result = prime * result + (int) (temp ^ (temp >>> 32));
+    result = prime * result + ((type == null) ? 0 : type.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    AbstractComputer other = (AbstractComputer) obj;
+    if (color == null) {
+      if (other.color != null) {
+        return false;
+      }
+    } else if (!color.equals(other.color)) {
+      return false;
+    }
+    if (Double.doubleToLongBits(priceInHryvnas) != Double.doubleToLongBits(other.priceInHryvnas)) {
+      return false;
+    }
+    if (type == null) {
+      if (other.type != null) {
+        return false;
+      }
+    } else if (!type.equals(other.type)) {
+      return false;
+    }
+    return true;
   }
 }

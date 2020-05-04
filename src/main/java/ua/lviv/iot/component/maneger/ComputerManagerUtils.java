@@ -3,58 +3,58 @@ package ua.lviv.iot.component.maneger;
 import ua.lviv.iot.component.model.AbstractComputer;
 import ua.lviv.iot.component.model.SortTYPE;
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class ComputerManagerUtils {
-
-
-  private static final MonitorSorterByPrice MONITOR_SORTER_BY_PRICE = new MonitorSorterByPrice();
-
-  public static void sortByPrice(List<AbstractComputer> computers, SortTYPE sortTYPE,
-                                 Comparator<AbstractComputer> comparator) {
-    computers.sort(sortTYPE == SortTYPE.ASC ? MONITOR_SORTER_BY_PRICE : MONITOR_SORTER_BY_PRICE.reversed());
+  public static List<AbstractComputer> sortComponentsByPrice(List<AbstractComputer> components, SortTYPE sortTYPE) {
+    Comparator<AbstractComputer> comparator = new PriceComparator();
+    return sortComponentsBy(components, sortTYPE, comparator);
   }
 
-  public static void sortByBrand(List<AbstractComputer> computers, SortTYPE sortTYPE, Comparator<AbstractComputer> comparator) {
-    Comparator<AbstractComputer> comparator1 = Comparator.comparing(AbstractComputer::getBrand);
-    computers.sort(sortTYPE == SortTYPE.ASC ? comparator : comparator.reversed());
+  public static List<AbstractComputer> sortComponentsByColor(List<AbstractComputer> components, SortTYPE sortTYPE) {
+    ComputerManagerUtils utils = new ComputerManagerUtils();
+    Comparator<AbstractComputer> comparator = utils.new ColorComparator();
+    return sortComponentsBy(components, sortTYPE, comparator);
   }
 
-  public static void sortByPriceAndBrand(List<AbstractComputer> computers, SortTYPE sortTYPE) {
-    Comparator<AbstractComputer> comparator = new Comparator<AbstractComputer>() {
-      @Override
-      public int compare(AbstractComputer firstComputer, AbstractComputer secondComputer) {
-        int priceCapacityResult = firstComputer.getPrice() - secondComputer.getPrice();
-        if (priceCapacityResult != 0) {
-          return priceCapacityResult;
-        }
-        return firstComputer.getBrand().compareTo(secondComputer.getBrand());
-      }
-    };
-
-  }
-
-  public static List<AbstractComputer> sortByDateOfManufacture
-          (List<AbstractComputer> computers, SortTYPE sortTYPE) {
-    Comparator<AbstractComputer> comparator = (AbstractComputer firstComputer, AbstractComputer secondComputer) -> firstComputer.getDateOfManufacture() - secondComputer.getDateOfManufacture();
-    return computers;
-
+  public static List<AbstractComputer> sortComputersByProducer(List<AbstractComputer> components, SortTYPE sortTYPE) {
+    ComputerManagerUtils utils = new ComputerManagerUtils();
+    Comparator<AbstractComputer> comparator = utils.producerComparator;
+    return sortComponentsBy(components, sortTYPE, comparator);
   }
 
 
-  class MonitorSorterByBrand implements Comparator<AbstractComputer> {
+  private static List<AbstractComputer> sortComponentsBy(List<AbstractComputer> components, SortTYPE sortType,
+                                                       Comparator<AbstractComputer> comparator) {
+    components.sort(sortType == SortTYPE.ASC ? comparator : Collections.reverseOrder(comparator));
+    return components;
+  }
+
+  private Comparator<AbstractComputer> producerComparator = new Comparator<AbstractComputer>() {
     @Override
-    public int compare(AbstractComputer firstComputer, AbstractComputer secondComputer) {
-      return firstComputer.getBrand().compareTo(secondComputer.getBrand());
+    public int compare(AbstractComputer firstDecor, AbstractComputer secondDecor) {
+      return firstDecor.getBrand().compareTo(secondDecor.getBrand());
     }
 
-  }
+  };
 
-  static class MonitorSorterByPrice implements Comparator<AbstractComputer> {
+  private static class PriceComparator implements Comparator<AbstractComputer>, Serializable {
+    private static final long serialVersionUID = 8317167932461794587L;
+
     @Override
     public int compare(AbstractComputer firstComputer, AbstractComputer secondComputer) {
-      return firstComputer.getPrice() - secondComputer.getPrice();
+      return (int) (firstComputer.getPriceInHryvnas() - secondComputer.getPriceInHryvnas());
+    }
+  }
+
+  private class ColorComparator implements Comparator<AbstractComputer> {
+    @Override
+    public int compare(AbstractComputer firstComputer, AbstractComputer secondComputer) {
+      return firstComputer.getColor().compareTo(secondComputer.getColor());
     }
   }
 }
+

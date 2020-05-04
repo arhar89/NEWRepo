@@ -4,51 +4,43 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ua.lviv.iot.component.maneger.ComputerManager;
 import ua.lviv.iot.component.model.AbstractComputer;
-import ua.lviv.iot.component.model.ComputerException;
+import ua.lviv.iot.component.model.ComputerTYPE;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ComputerManagerTest extends ComputerComponentManagerTest {
-
-  private ComputerManager computerManager;
-
   @BeforeEach
-  public void setUp() {
-    computerManager = new ComputerManager();
-    computerManager.addComputers(monitors);
-
+  void setUp() {
+    createComponents();
   }
 
   @Test
-  public void testFindWithPriceLowerThan() {
-    List<AbstractComputer> computers = computerManager.findWithPriceLowerThan(60);
-    assertEquals(2, computers.size());
-    assertEquals(30, computers.get(0).getPrice());
-    assertEquals(45, computers.get(1).getPrice());
+  void testFindDecorationsByType() {
+    ComputerManager manager = new ComputerManager(components);
 
-  }
+    List<AbstractComputer> componentWihtKeyboard = manager
+            .findDecorationsByType(EnumSet.of(ComputerTYPE.MECKHANICK));
+    assertEquals(4, componentWihtKeyboard.size());
+    for (AbstractComputer currentDecor : componentWihtKeyboard) {
+      assertTrue(currentDecor.getType().contains(ComputerTYPE.MECKHANICK));
+    }
 
-  @Test
-  public void testFindBy() {
-    computerManager.findBy("monitor");
-  }
+    List<AbstractComputer> componentWithBlockSystem = manager.findDecorationsByType(EnumSet.of(ComputerTYPE.IN_TABLE));
+    assertEquals(6, componentWithBlockSystem.size());
+    for (AbstractComputer currentDecor : componentWithBlockSystem) {
+      assertTrue(currentDecor.getType().contains(ComputerTYPE.IN_TABLE));
+    }
 
-  @Test
-  public void testFindBySecuredImplementation() {
-    try {
-      computerManager.findByWithException(null);
-    } catch (ComputerException | RuntimeException e) {
-      e.getCause();
-      e.printStackTrace();
-      System.out.println("handle my exception");
-    } catch (Exception e) {
-      System.out.println("handle general exception");
-    } finally {
-
-      System.out.println("hi dudes");
+    List<AbstractComputer> componentWithMonitor = manager
+            .findDecorationsByType(EnumSet.of(ComputerTYPE.IN_STAND, ComputerTYPE.IN_STAND));
+    assertEquals(1, componentWithMonitor.size());
+    for (AbstractComputer currentDecor : componentWithMonitor) {
+      assertTrue(
+              currentDecor.getType().containsAll(EnumSet.of(ComputerTYPE.IN_STAND, ComputerTYPE.IN_STAND)));
     }
   }
-
 }
