@@ -2,57 +2,69 @@ package ua.lviv.iot.component;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ua.lviv.iot.component.maneger.ComputerReader;
 import ua.lviv.iot.component.maneger.ComputerWriter;
-import ua.lviv.iot.component.model.AbstractComputer;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.List;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ComputerReaderWriterTest {
-  private static final String OUTPUT_FILE_PATH = "objects.csv";
+public class ComputerReaderWriterTest extends ComputerComponentManagerTest {
+  String expectedString;
+
   ComputerWriter computerWriter;
+  ComputerReader computerReader;
 
   @BeforeEach
-  void setUp() {
+  public void setUp() {
     createComponents();
+    expectedString = "color, priceInHryvnas, brand, power\r\n" +
+            "null, aaa, null, 10.0\r\n" +
+            "null, bab, null, 11.0\r\n" +
+            "null, baa, null, 15.0\r\n" +
+            "null, aba, null, 32.0\r\n" +
+            "null, abb, null, 45.0, [monitor, block system, keyboard]\r\n";
     computerWriter = new ComputerWriter();
-  }
-
-  private void createComponents() {
+    computerReader = new ComputerReader();
   }
 
   @Test
-  void testDecorFileWriter() {
-    try (Writer fileWriter = new FileWriter(OUTPUT_FILE_PATH);) {
-      computerWriter.setTextWriter(fileWriter);
-      List<AbstractComputer> components = null;
+  void testWriteAndReadToFile() {
+    try (Writer writer = new FileWriter("Output.csv");) {
+      computerWriter.setWriter(writer);
       computerWriter.writeToFile(components);
     } catch (IOException e) {
+      e.printStackTrace();
+    }
+    try (Reader reader = new FileReader("Output.csv");) {
+      computerReader.setReader(reader);
+      String finalReturn = computerReader.readFromFile();
+      System.out.println(finalReturn);
+      assertEquals(expectedString, finalReturn);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
+  @Test
+  void testWriteToFile() {
+    try (Writer writer = new FileWriter("Output.csv");) {
+      computerWriter.setWriter(writer);
+      computerWriter.writeToFile(components);
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
   @Test
-  void testDecorStringWriter() {
-    List<AbstractComputer> components = null;
-    try (Writer stringWriter = new StringWriter();) {
-      computerWriter.setTextWriter(stringWriter);
+  void testStringWriter() {
+    try (Writer writer = new StringWriter();) {
+      computerWriter.setWriter(writer);
       computerWriter.writeToFile(components);
+      assertEquals(expectedString, computerWriter.toString());
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-    String expectedString = "";
-    for (AbstractComputer currentComputer : components) {
-      expectedString += currentComputer.getHeaders() + ", " + currentComputer.toCSV() + "\r\n";
-    }
-
-    assertEquals(expectedString, computerWriter.toString());
   }
+
 }

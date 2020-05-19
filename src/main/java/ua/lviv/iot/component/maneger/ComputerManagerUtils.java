@@ -48,13 +48,13 @@ public class ComputerManagerUtils {
     public int compare(AbstractComputer firstComputer, AbstractComputer secondComputer) {
       return (int) (firstComputer.getPriceInHryvnas() - secondComputer.getPriceInHryvnas());
     }
-  }
-
-  private class ColorComparator implements Comparator<AbstractComputer> {
+  } private class ColorComparator implements Comparator<AbstractComputer> {
     @Override
     public int compare(AbstractComputer firstComputer, AbstractComputer secondComputer) {
       return firstComputer.getColor().compareTo(secondComputer.getColor());
     }
   }
 }
+
+
 

@@ -9,25 +9,28 @@ import java.util.List;
 public class ComputerWriter {
   Writer textWriter;
 
-  public void setTextWriter(Writer textWriter) {
+  public Writer getWriter() {
+    return textWriter;
+  }
+
+  public void setWriter(Writer textWriter) {
     this.textWriter = textWriter;
   }
 
-  public void writeToFile(List<AbstractComputer> components) throws IOException {
-    for (AbstractComputer currentComputer : components) {
-      String lineToWrite = currentComputer.getHeaders() + ", " + currentComputer.toCSV();
-      writeLine(textWriter, lineToWrite);
+  public void writeToFile(List<AbstractComputer> abstractComputers) throws IOException {
+    writeLine(textWriter, abstractComputers.get(0).getHeaders());
+    for (AbstractComputer abstractComputer : abstractComputers) {
+      writeLine(textWriter, abstractComputer.toCSV());
     }
     textWriter.flush();
   }
 
-  private void writeLine(Writer writer, String text) throws IOException {
-    writer.write(text + "\r\n");
+  public void writeLine(Writer writer, String string) throws IOException {
+    writer.write(string + "\r\n");
   }
 
   @Override
   public String toString() {
     return textWriter.toString();
   }
-
 }
